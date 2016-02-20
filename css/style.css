@@ -1,7 +1,7 @@
 .navigation {
     background: rgba(29, 173, 246, 0.8);
     padding: 0;
-}
+    }
 
 #icon-group {
     background: rgba(0, 150, 210, 0.3);
@@ -60,6 +60,8 @@
     display: inline-block;
     border-radius: 50px;
 }
+
+
 
 #fullpage > div:nth-child(1) .myheading{
     width: 110px;
