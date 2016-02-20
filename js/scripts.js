@@ -3,7 +3,9 @@ $(document).ready(function () {
         menu: '#mobile-dropdown',
         sectionsColor: ['#006495', '#F2635F', '#A2E9EC', '#F4D00C'],
         anchors:['home', 'portfolio', 'about','contact'],
-        css3: true
+        scrollBar: true,
+        paddingTop: '80px',
+        paddingBottom: '30px',
     });
 
 
