@@ -45,6 +45,20 @@
     background-color: #444;
 }
 
+.slide{
+    margin: 0 auto;
+    text-align: center;
+}
+
+.works{
+    display: block;
+}
+
+.works .img-responsive{
+    margin: 0 auto;
+}
+
+
 @media only screen and (max-width: 768px) {
     #mobile-dropdown {
         padding: 0;
