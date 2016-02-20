@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .navigation{
     background:rgba(29, 173, 246, 0.8);
     padding:0;
@@ -72,3 +73,79 @@ border:none;
 
 
 }
+=======
+.navigation{
+    background:rgba(29, 173, 246, 0.8);
+    padding:0;
+}
+
+
+#icon-group{
+    background:rgba(0, 150, 210, 0.3);
+    border:none;
+}
+
+#icon-group.collapsed{
+background:rgba(0, 150, 210, 1);
+border:none;
+}
+
+
+
+
+#mobile-dropdown li a{
+    height:100%;
+    padding:20px;
+    border-right:1px solid #5df;
+    color:#333;
+    font-size:1.2em;
+    font-family:'Segoe UI', sans-serif;
+    font-weight:500;
+}
+
+#mobile-dropdown li:first-child a {
+    border-left:1px solid #5df;
+}
+
+#mobile-dropdown li:last-child a {
+    border-right:none;
+}
+
+#mobile-dropdown li a:hover, #mobile-dropdown li a:focus, #mobile-dropdown li a.active{
+    background-color:#0093D1;
+}
+
+.navbar-header > a{
+    padding-top:2px;
+}
+
+.icon{
+    background-color:#444;
+}
+
+
+
+
+
+@media only screen and (max-width : 768px) {
+
+    #mobile-dropdown{
+        padding:0;
+    }
+
+    #mobile-dropdown li a{
+    height:100%;
+    padding:20px 0;
+    border-right:none;
+    border-bottom:1px solid #2EA8E5;
+    width:100%;
+    margin:0;
+}
+
+#mobile-dropdown li:first-child a {
+    border-left:none;
+}
+
+
+}
+>>>>>>> faizanakram99.github.io/master
