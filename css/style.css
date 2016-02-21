@@ -1,3 +1,7 @@
+div.section div.container-fluid{
+    position: relative;
+}
+
 .navigation {
     background: rgba(29, 173, 246, 0.8);
     padding: 0;
@@ -34,7 +38,8 @@
 #mobile-dropdown li a:hover,
 #mobile-dropdown li a:focus,
 #mobile-dropdown li a.active {
-    background-color: #0093D1;
+    background-color: #00ccFF;
+    color: #fff;
 }
 
 .navbar-header > a {
@@ -68,7 +73,7 @@
 
 #fullpage > div:nth-child(2) .myheading{
     width: 190px;
-}
+  }
 
 #fullpage > div:nth-child(3) .myheading{
     width: 130px;
@@ -76,6 +81,8 @@
 
 #fullpage > div:nth-child(4) .myheading{
     width: 160px;
+    position: relative;
+    top:-60px;
 }
 
 .home-content{
@@ -94,13 +101,9 @@
     color: #fff;
     font-size: 60px;
     padding: 3px 5px;
-    border: 1px solid deepskyblue;
+    border: none;
     border-radius: 5px;
-    background: #00bfff;
-    background: -webkit-linear-gradient(#00bfff,#b2ebff);
-    background: -o-linear-gradient(#00bfff,#b2ebff);
-    background: -moz-linear-gradient(#00bfff,#b2ebff);
-    background: linear-gradient(#00bfff,#b2ebff);
+    background: rgba(255,255,255,0.4);
 }
 
 .move-down a:hover,.move-down a:active,.move-down a:visited,.move-down a:focus{
@@ -108,17 +111,14 @@
 }
 
 .move-down a:hover{
-background: #00bfff;
-    background: -webkit-linear-gradient(bottom,#00bfff,#b2ebff);
-    background: -o-linear-gradient(bottom,#00bfff,#b2ebff);
-    background: -moz-linear-gradient(bottom,#00bfff,#b2ebff);
-    background: linear-gradient(bottom,#00bfff,#b2ebff);
-
+    background: rgba(133,133,133,0.4);
 }
 
 .slide {
     margin: 0 auto;
     text-align: center;
+    margin-top: -65px;
+    margin-bottom: 0;
     }
 
 .works {
@@ -131,6 +131,14 @@ background: #00bfff;
     height: auto;
 }
 
+#portfolio-move-down{
+    margin-top: -45px;
+}
+
+a.move-up{
+    position: relative;
+    right:20px;
+    }
 
 
 @media only screen and (max-width: 768px) {
