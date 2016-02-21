@@ -76,6 +76,8 @@ div.section div.container-fluid{
 
 #fullpage > div:nth-child(3) .myheading{
     width: 130px;
+    position: relative;
+    top:-40px;
 }
 
 #fullpage > div:nth-child(4) .myheading{
@@ -86,9 +88,9 @@ div.section div.container-fluid{
 
 .home-content{
     color: #fff;
-    padding-top: 10px;
+    padding-top: 20px;
     font-weight: bold;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
 }
 
 .home-content a{
@@ -139,6 +141,15 @@ div.section div.container-fluid{
     height: auto;
 }
 
+.about-content{
+    color: #fff;
+    padding: 10px 0;
+    font-weight: 100;
+}
+
+#about-margin{
+    margin-bottom: 50px;
+}
 
 div.row{
     position: relative;
