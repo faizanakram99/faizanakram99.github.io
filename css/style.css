@@ -140,11 +140,15 @@ div.section div.container-fluid{
     margin-top: -45px;
 }
 
-a.move-up{
-    position: relative;
-    right:20px;
-    }
 
+div.row{
+    position: relative;
+    top:60px;
+}
+
+div.row > div{
+    padding: 20px;
+}
 
 @media only screen and (max-width: 768px) {
     #mobile-dropdown {
