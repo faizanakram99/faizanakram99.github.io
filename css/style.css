@@ -63,7 +63,6 @@ div.section div.container-fluid{
 }
 
 
-
 #fullpage > div:nth-child(1) .myheading{
     width: 110px;
     margin: 0 auto;
@@ -87,9 +86,9 @@ div.section div.container-fluid{
 
 .home-content{
     color: #fff;
-    padding-top: 20px;
+    padding-top: 10px;
     font-weight: bold;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .home-content a{
@@ -97,9 +96,13 @@ div.section div.container-fluid{
     white-space: nowrap;
 }
 
+.move-down{
+    position: relative;
+}
+
 .move-down a{
     color: #fff;
-    font-size: 60px;
+    font-size: 4.2em;
     padding: 3px 5px;
     border: none;
     border-radius: 5px;
@@ -118,7 +121,7 @@ div.section div.container-fluid{
     margin: 0 auto;
     text-align: center;
     margin-top: -60px;
-    margin-bottom: 0;
+    margin-bottom: -50px;
     }
 
 .slide a{
@@ -136,10 +139,6 @@ div.section div.container-fluid{
     height: auto;
 }
 
-#portfolio-move-down{
-    margin-top: -45px;
-}
-
 
 div.row{
     position: relative;
@@ -150,7 +149,23 @@ div.row > div{
     padding: 20px;
 }
 
+div.row img{
+    -webkit-filter: none;
+            filter: none;
+    -webkit-transition: all .4s ease;
+    transition: all .4s ease;
+}
+
+div.row img:hover{
+    -webkit-filter:invert(70%);
+            filter:invert(70%);
+}
+
 @media only screen and (max-width: 768px) {
+    body{
+        font-size: 12px;
+    }
+
     #mobile-dropdown {
         padding: 0;
     }

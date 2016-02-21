@@ -7,6 +7,10 @@ $(document).ready(function () {
         paddingBottom: '30px',
     });
 
+    if ($(window).width() < 800){
+        $.fn.fullpage.setAutoScrolling(false);
+    }
+
 
     $("#mobile-dropdown ul li a").on("click", function () {
         $("#mobile-dropdown ul li a").removeClass("active");

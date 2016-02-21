@@ -85,14 +85,14 @@ html.fp-enabled {
 }
 
 .fp-controlArrow.fp-prev {
-    left: 5%;
+    left: 3%;
     width: 47px;
     height: 46px;
     background: url(../images/prev.jpg) no-repeat center;
 }
 
 .fp-controlArrow.fp-next {
-    right: 5%;
+    right: 3%;
     width: 47px;
     height: 46px;
     background: url(../images/next.jpg) no-repeat center;
