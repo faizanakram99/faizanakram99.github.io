@@ -2,9 +2,9 @@
 <!--Created using XmlSitemapGenerator.org - Free HTML, RSS and XML sitemap generator-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>http://faizanakram99.github.io/</loc>
+    <loc>http://faizanakram.me/</loc>
     <image:image>
-      <image:loc>http://faizanakram99.github.io/images/logo.png</image:loc>
+      <image:loc>http://faizanakram.me/images/logo.png</image:loc>
     </image:image>
   </url>
 </urlset>
