@@ -195,4 +195,7 @@ div.row img:hover{
     .h3{
         font-size: 20px !important;
     }
+    p.h2{
+        font-size: 25px;
+    }
 }
