@@ -192,4 +192,7 @@ div.row img:hover{
     #mobile-dropdown li:first-child a {
         border-left: none;
     }
+    .h3{
+        font-size: 20px !important;
+    }
 }
