@@ -20,7 +20,7 @@ div.section div.container-fluid{
 #mobile-dropdown li a {
     height: 100%;
     padding: 20px;
-    border-right: 1px solid #5df;
+    border-right: 1px solid #08f;
     color: #333;
     font-size: 1.2em;
     font-family: 'Segoe UI', sans-serif;
@@ -28,7 +28,7 @@ div.section div.container-fluid{
 }
 
 #mobile-dropdown li:first-child a {
-    border-left: 1px solid #5df;
+    border-left: 1px solid #08f;
 }
 
 #mobile-dropdown li:last-child a {
@@ -38,7 +38,7 @@ div.section div.container-fluid{
 #mobile-dropdown li a:hover,
 #mobile-dropdown li a:focus,
 #mobile-dropdown li a.active {
-    background-color: #00ccFF;
+    background-color: #0af;
     color: #fff;
 }
 
