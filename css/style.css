@@ -88,9 +88,8 @@ div.section div.container-fluid{
 
 .home-content{
     color: #fff;
-    padding-top: 20px;
+    padding:20px 0;
     font-weight: bold;
-    padding-bottom: 20px;
 }
 
 .home-content a{
@@ -145,32 +144,36 @@ div.section div.container-fluid{
     color: #fff;
     padding: 10px 0;
     font-weight: 100;
+    margin: 25px 0;
 }
-
-#about-margin{
-    margin-bottom: 50px;
-}
-
 div.row{
     position: relative;
     top:60px;
 }
-
 div.row > div{
     padding: 20px;
 }
-
 div.row img{
     -webkit-filter: none;
             filter: none;
     -webkit-transition: all .4s ease;
     transition: all .4s ease;
 }
-
 div.row img:hover{
     -webkit-filter:invert(70%);
             filter:invert(70%);
 }
+pre{
+    white-space: pre-line;
+    word-break: normal !important;
+    text-align: center;
+    max-width: 300px;
+    margin: 0 auto;
+}
+.fp-controlArrow{
+    display: none;
+}
+
 
 @media only screen and (max-width: 768px) {
     body{
@@ -197,5 +200,23 @@ div.row img:hover{
     }
     p.h2{
         font-size: 25px;
+    }
+    #fullpage > div:nth-child(3) .myheading{
+        top: -15px;
+    }
+    #about-margin {
+        margin: 10px 0;
+    }
+    div.row{
+        position: static;
+    }
+    .about-content{
+        margin: 5px 0;
+    }
+}
+
+@media only screen and (min-width: 1440px) {
+    body{
+        font-size: 20px;
     }
 }
