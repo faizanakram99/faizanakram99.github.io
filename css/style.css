@@ -5,7 +5,7 @@ div.section div.container-fluid{
 .navigation {
     background: rgba(29, 173, 246, 0.8);
     padding: 0;
-    }
+}
 
 #icon-group {
     background: rgba(0, 150, 210, 0.3);
@@ -59,31 +59,17 @@ div.section div.container-fluid{
     color:#fff;
     border-bottom: 5px solid;
     display: inline-block;
+    position: relative;
+    padding: 0 15px;
     border-radius: 50px;
+    top: -40px;
 }
-
 
 #fullpage > div:nth-child(1) .myheading{
-    width: 110px;
-    margin: 0 auto;
-    position: relative;
     top:-30px;
-    }
-
-#fullpage > div:nth-child(2) .myheading{
-    width: 190px;
-  }
-
-#fullpage > div:nth-child(3) .myheading{
-    width: 130px;
-    position: relative;
-    top:-40px;
 }
-
-#fullpage > div:nth-child(4) .myheading{
-    width: 160px;
-    position: relative;
-    top:-40px;
+#fullpage > div:nth-child(2) .myheading{
+    position: static;
 }
 
 .home-content{
@@ -97,8 +83,9 @@ div.section div.container-fluid{
     white-space: nowrap;
 }
 
-.move-down{
-    position: relative;
+p.move-down{
+    position: sticky;
+    top: 100%;
 }
 
 .move-down a{
@@ -167,11 +154,17 @@ pre{
     white-space: pre-line;
     word-break: normal !important;
     text-align: center;
-    max-width: 300px;
+    max-width: 30%;
     margin: 0 auto;
 }
 .fp-controlArrow{
     display: none;
+}
+h3, .h3{
+    font-size: 1.72em !important;
+}
+h2, .h2{
+    font-size: 2.14em !important;
 }
 
 
@@ -179,7 +172,10 @@ pre{
     body{
         font-size: 10px;
     }
-
+    .navigation {
+        background: rgba(29, 173, 246, 0.9);
+        padding: 0;
+    }
     #mobile-dropdown {
         padding: 0;
     }
@@ -191,15 +187,16 @@ pre{
         border-bottom: 1px solid #2EA8E5;
         width: 100%;
         margin: 0;
+        font-size: 1.8em;
+    }
+    #mobile-dropdown li a:hover,
+    #mobile-dropdown li a:focus,
+    #mobile-dropdown li a.active {
+        background-color: #404040;
+        color: #fff;
     }
     #mobile-dropdown li:first-child a {
         border-left: none;
-    }
-    .h3{
-        font-size: 20px !important;
-    }
-    p.h2{
-        font-size: 25px;
     }
     #fullpage > div:nth-child(3) .myheading{
         top: -15px;
