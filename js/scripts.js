@@ -9,13 +9,9 @@ $(function () {
           $navbar = $document.find("#mobile-dropdown"),
           $menuitem = $navbar.find("ul li a");
     
-    /** @function */
-    let slideTimeout;
-
     /** @function */    
     const afterRender = function () {
-        //on page load, start the slideshow
-        slideTimeout = setInterval(function () {
+        setInterval(function () {
             $.fn.fullpage.moveSlideRight();
         }, 2700);
     };
