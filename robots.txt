@@ -1,4 +1,4 @@
 User-agent: *
+Disallow: /googlefea5900a14ebf38c.html
+Disallow: /zohoverify/
 Allow: /
-Allow: /sitemap.htm
-Sitemap: http://faizanakram.me/sitemap.xml
