@@ -20,6 +20,8 @@ const setTheme = (theme) => {
 
 // Update toggle icon visibility
 const updateToggleIcon = (theme) => {
+    if (!themeToggle) return;
+
     const sunIcon = themeToggle.querySelector('.sun-icon');
     const moonIcon = themeToggle.querySelector('.moon-icon');
 
@@ -43,7 +45,9 @@ const toggleTheme = () => {
 setTheme(getTheme());
 
 // Add click event listener
-themeToggle.addEventListener('click', toggleTheme);
+if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+}
 
 // Listen for system theme changes (only if user hasn't manually set a preference)
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {

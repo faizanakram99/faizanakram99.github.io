@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Notifying external systems about domain events via webhooks.">
+    <meta name="author" content="Faizan Akram Dar">
+    <title>From Domain Events to Webhooks | Faizan Akram Dar</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        .blog-post {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        .blog-post h1 {
+            margin-bottom: 0.5rem;
+        }
+        .blog-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .blog-post h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .blog-post h3 {
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .blog-post p {
+            margin-bottom: 1rem;
+        }
+        .blog-post pre {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-left: 3px solid #333;
+        }
+        .blog-post code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .blog-post p code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+        }
+        .architecture-flow {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+            font-family: monospace;
+            text-align: center;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        [data-theme="dark"] .blog-post pre {
+            background: #1e1e1e;
+            border-left-color: #666;
+        }
+        [data-theme="dark"] .blog-post p code {
+            background: #2a2a2a;
+        }
+        [data-theme="dark"] .architecture-flow {
+            background: #2a2a2a;
+        }
+        [data-theme="dark"] .blog-meta {
+            color: #999;
+        }
+        [data-theme="dark"] pre code {
+            color: #d4d4d4;
+        }
+        .blog-post a {
+            color: #0066cc;
+        }
+        [data-theme="dark"] .blog-post a {
+            color: #4a9eff;
+        }
+        .tip {
+            background: #f0f7ff;
+            border-left: 4px solid #0066cc;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+        .tip strong {
+            color: #0066cc;
+            font-weight: 600;
+        }
+        [data-theme="dark"] .tip {
+            background: #1a2332;
+            border-left-color: #4a9eff;
+        }
+        [data-theme="dark"] .tip strong {
+            color: #4a9eff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        </button>
+        <article class="blog-post">
+            <a href="../index.html" class="back-link">← Back to home</a>
+
+            <h1>From Domain Events to Webhooks</h1>
+            <div class="blog-meta">
+                <time datetime="2025-12-22">December 22, 2025</time> • 6 min read
+            </div>
+
+            <p>
+                I work on an ERP system that integrates with various external systems like warehouse management systems,
+                accounting softwares, weighing bridges, etc.
+                When something changes in our system like an order is created, or a shipment is dispatched,
+                multiple external systems need to know about it.
+            </p>
+            <p>
+                We use domain events internally, and translate those into HTTP webhooks for external consumers.
+            </p>
+            <p>
+                Here's how we do it (I've simplified it for this post).
+            </p>
+
+            <h3>Domain Events</h3>
+            <p>
+                Domain events implement this interface:
+            </p>
+            <pre><code class="language-php">interface DomainEvent
+{
+    public function aggregateRootId(): string;
+    public function displayReference(): string;
+    public function occurredAt(): \DateTimeImmutable;
+    public static function eventType(): DomainEventType;
+}</code></pre>
+            <pre><code class="language-php">#[TriggerWebhook]
+class OrderConfirmed implements DomainEvent
+{
+    public function __construct(
+        private string $orderId,
+        private string $orderNumber,
+        private \DateTimeImmutable $confirmedAt,
+    ) {}
+
+    public function aggregateRootId(): string
+    {
+        return $this->orderId;
+    }
+
+    public function displayReference(): string
+    {
+        return $this->orderNumber;
+    }
+
+    public function occurredAt(): \DateTimeImmutable
+    {
+        return $this->confirmedAt;
+    }
+
+    public static function eventType(): DomainEventType
+    {
+        return DomainEventType::OrderConfirmed;
+    }
+}</code></pre>
+            <p>The <code>DomainEventType</code> enum maps event types to their classes:</p>
+            <pre><code class="language-php">enum DomainEventType: string
+{
+    case OrderConfirmed = 'order.confirmed';
+    // ... more event types
+
+    public function eventClass(): string
+    {
+        return match($this) {
+            self::OrderConfirmed => OrderConfirmed::class,
+            // ... more mappings
+        };
+    }
+}</code></pre>
+
+            <p>
+                The entity records what happened. The repository saves it and dispatches events (via Symfony Messenger).
+            </p>
+            <pre><code class="language-php">use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+
+class Order
+{
+    /** @var DomainEvent[] */
+    private array $events = [];
+
+    public function confirm(\DateTimeImmutable $confirmedAt): void
+    {
+        $this->status = OrderStatus::Confirmed;
+
+        $this->events[] = new OrderConfirmed(
+            orderId: $this->id,
+            orderNumber: $this->orderNumber,
+            confirmedAt: $confirmedAt,
+        );
+    }
+
+    public function releaseEvents(): array
+    {
+        $events = $this->events;
+        $this->events = [];
+
+        return $events;
+    }
+}</code></pre>
+            <pre><code class="language-php">class OrderRepository
+{
+    public function __construct(
+        private EntityManagerInterface $em,
+        private MessageBusInterface $eventBus,
+    ) {}
+
+    public function save(Order $order): void
+    {
+        $events = $order->releaseEvents();
+
+        $this->em->persist($order);
+        $this->em->flush();
+
+        foreach ($events as $event) {
+            $this->eventBus->dispatch($event);
+        }
+    }
+}</code></pre>
+            <h3>Webhooks</h3>
+            <p>
+                Notice the <code>#[TriggerWebhook]</code> attribute on <code>OrderConfirmed</code> class? That's how we
+                mark which events should trigger webhooks.
+            </p>
+            <p>
+                A message handler listens for all events implementing <code>DomainEvent</code> interface,
+                but only processes those marked with <code>#[TriggerWebhook]</code>:
+            </p>
+            <pre><code class="language-php">interface WebhookSubscriptions
+{
+    /**
+     * @return iterable&lt;WebhookSubscription&gt;
+     */
+    public function findByTopic(DomainEventType $topic): iterable;
+}</code></pre>
+            <pre><code class="language-php">class WebhookSubscription
+{
+    public string $secret { get => hash('sha256', $this->userId); }
+
+    public function __construct(private(set) string $url, private string $userId) {}
+}</code></pre>
+            <pre><code class="language-php">use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\RemoteEvent\RemoteEvent;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Uid\Factory\UuidFactory;
+use Symfony\Component\Webhook\Messenger\SendWebhookMessage;
+use Symfony\Component\Webhook\Subscriber;
+
+#[AsMessageHandler]
+class WebhookSender
+{
+    /**
+     * @param DomainEventType[] $webhookTopics
+     */
+    public function __construct(
+        private MessageBusInterface $bus,
+        private WebhookSubscriptions $subscriptions,
+        private NormalizerInterface $normalizer,
+        private UuidFactory $uuidFactory,
+
+        #[Autowire(param: 'webhook.topics')]
+        private array $webhookTopics,
+    ) {}
+
+    public function __invoke(DomainEvent $event): void
+    {
+        if (!\in_array($event::eventType(), $this->webhookTopics, true)) {
+            return;
+        }
+
+        $payload = $this->createPayload($event);
+
+        $remoteEvent = new RemoteEvent(
+            name: $event::eventType()->value,
+            id: $this->uuidFactory->create()->toString(),
+            payload: $payload,
+        );
+
+        foreach ($this->subscriptions->findByTopic($event::eventType()) as $subscription) {
+            $this->bus->dispatch(
+                new SendWebhookMessage(
+                    new Subscriber($subscription->url, $subscription->secret),
+                    $remoteEvent,
+                ),
+            );
+        }
+    }
+
+    private function createPayload(DomainEvent $event): array
+    {
+        // Option 1: Send the event directly
+        return $this->normalizer->normalize($event);
+
+        // Option 2: Send the event as dataless notification
+        // with resource URL, we use this approach
+        return [
+            'resourceId' => $event->aggregateRootId(),
+            'displayReference' => $event->displayReference(),
+            'occurredAt' => $event->occurredAt()->getTimestamp(),
+
+            // use API platform's IriConverter to get the URL
+            'url' => $this->generateResourceUrl($event),
+            'topic' => $event::eventType()->value,
+        ];
+    }
+}</code></pre>
+            <p>
+                The <code>$webhookTopics</code> property (<code>webhook.topics</code> param) is populated by collecting all classes
+                with <code>#[TriggerWebhook]</code> attribute. It uses Symfony's resource locator under the hood. I'll hopefully
+                write another post about that.
+            </p>
+            <p>
+                The <code>Subscriber</code> class is Symfony's representation of a webhook consumer. It holds the webhook URL
+                and an optional secret for HMAC signature verification. Symfony's webhook transport uses this to send the HTTP
+                POST request and automatically generates the <code>Webhook-Signature</code> header using the secret.
+            </p>
+
+            <div class="tip">
+                <p><strong>TIP:</strong> Route <code>SendWebhookMessage</code> to an async transport in your Messenger configuration for automatic retries and better failure handling.</p>
+            </div>
+
+            <p>
+                If you're using API Platform, you can use it to document your webhooks in OpenAPI.
+                OpenAPI supports webhooks since version 3.1.0.
+            </p>
+            <pre><code class="language-php">use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Attributes\Webhook;
+use ApiPlatform\OpenApi\Model\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
+use ApiPlatform\OpenApi\Model\PathItem;
+use ApiPlatform\OpenApi\Model\Response;
+
+#[ApiResource(
+    operations: [
+        new Post(
+            openapi: new Webhook(
+                name: 'Webhook',
+                pathItem: new PathItem(
+                    post: new Operation(
+                        operationId: 'resource_webhook',
+                        tags: ['Webhooks'],
+                        responses: [
+                            '2XX' => new Response(
+                                description: 'Return 2xx to acknowledge receipt'
+                            ),
+                            'default' => new Response(
+                                description: 'Non-2xx triggers retry: 5m, 25m, 2h5m'
+                            ),
+                        ],
+                        summary: 'Webhook notification for order events',
+                        description: 'Sent when subscribed order events occur. Event type in Webhook-Event header.',
+                        parameters: [
+                            new Parameter(
+                                name: 'Webhook-Signature',
+                                in: 'header',
+                                description: 'HMAC-SHA256 signature for verification',
+                                required: true,
+                                schema: ['type' => 'string']
+                            ),
+                            new Parameter(
+                                name: 'Webhook-Event',
+                                in: 'header',
+                                description: 'Event type (e.g., order.confirmed)',
+                                required: true,
+                                schema: ['type' => 'string']
+                            ),
+                            new Parameter(
+                                name: 'Webhook-Id',
+                                in: 'header',
+                                description: 'Unique delivery identifier',
+                                required: true,
+                                schema: ['type' => 'string']
+                            ),
+                        ]
+                    )
+                )
+            ),
+        ),
+    ],
+)]
+class WebhookPayload
+{
+    public function __construct(
+        public string $resourceId,
+        public string $displayReference,
+        public \DateTimeImmutable $occurredAt,
+        public string $url,
+        public string $topic,
+    ) {}
+}</code></pre>
+            <hr style="margin: 2.5rem 0; border: none; border-top: 1px solid #ddd;">
+
+            <p>
+                Questions? Find me on
+                <a href="https://linkedin.com/in/faizanakram" target="_blank">LinkedIn</a> or
+                <a href="https://twitter.com/faizanakram99" target="_blank">Twitter</a>.
+            </p>
+
+            <a href="../index.html" class="back-link">← Back to home</a>
+        </article>
+    </div>
+    <script src="../script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        // Ensure Prism highlights code after autoloader finishes
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Prism !== 'undefined') {
+                // Give autoloader time to load PHP language
+                setTimeout(function() {
+                    Prism.highlightAll();
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
