@@ -270,6 +270,7 @@ class Order
 }</code></pre>
             <pre><code class="language-php">class WebhookSubscription
 {
+    // NOTE: This is just an example, you should generate webhook secret properly
     public string $secret { get => hash('sha256', $this->userId); }
 
     public function __construct(private(set) string $url, private string $userId) {}
@@ -343,7 +344,7 @@ class WebhookSender
 }</code></pre>
             <p>
                 The <code>$webhookTopics</code> property (<code>webhook.topics</code> param) is populated by collecting all classes
-                with <code>#[TriggerWebhook]</code> attribute. It uses Symfony's resource locator under the hood. I'll hopefully
+                with <code>#[TriggerWebhook]</code> attribute. It uses Symfony's resource tags under the hood. I'll hopefully
                 write another post about that.
             </p>
             <p>
