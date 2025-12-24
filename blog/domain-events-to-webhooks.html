@@ -35,7 +35,6 @@
             margin-bottom: 1rem;
         }
         .blog-post pre {
-            background: #f5f5f5;
             padding: 1rem;
             border-radius: 4px;
             overflow-x: auto;
@@ -45,6 +44,13 @@
         .blog-post code {
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
+        }
+        .blog-post pre code {
+            filter: contrast(1.3) brightness(0.85);
+        }
+        .blog-post pre code .token {
+            background: none;
+            box-shadow: none;
         }
         .blog-post p code {
             background: #f5f5f5;
@@ -189,7 +195,13 @@ class OrderConfirmed implements DomainEvent
         return DomainEventType::OrderConfirmed;
     }
 }</code></pre>
-            <p>The <code>DomainEventType</code> enum maps event types to their classes:</p>
+            <p>
+                The <code>#[TriggerWebhook]</code> attribute marks this event for webhook delivery.
+            </p>
+            <p>
+                The <code>DomainEventType</code> enum maps event types to their classes.
+                We also persist events to an event store. The <code>eventClass()</code> method is used when deserializing stored events, but that's beyond the scope of this post:
+            </p>
             <pre><code class="language-php">enum DomainEventType: string
 {
     case OrderConfirmed = 'order.confirmed';
@@ -255,27 +267,11 @@ class Order
 }</code></pre>
             <h3>Webhooks</h3>
             <p>
-                Notice the <code>#[TriggerWebhook]</code> attribute on <code>OrderConfirmed</code> class? That's how we
-                mark which events should trigger webhooks.
+                A message handler processes all domain events, but only sends webhooks for those in the <code>$webhookTopics</code> array.
+                It is populated by collecting all classes with
+                <code>#[TriggerWebhook]</code> attribute using Symfony's resource tags,
+                a feature for tagging classes that aren't services. It was added in <a href="https://github.com/symfony/symfony/pull/59704">PR #59704</a>.
             </p>
-            <p>
-                A message handler listens for all events implementing <code>DomainEvent</code> interface,
-                but only processes those marked with <code>#[TriggerWebhook]</code>:
-            </p>
-            <pre><code class="language-php">interface WebhookSubscriptions
-{
-    /**
-     * @return iterable&lt;WebhookSubscription&gt;
-     */
-    public function findByTopic(DomainEventType $topic): iterable;
-}</code></pre>
-            <pre><code class="language-php">class WebhookSubscription
-{
-    // NOTE: This is just an example, you should generate webhook secret properly
-    public string $secret { get => hash('sha256', $this->userId); }
-
-    public function __construct(private(set) string $url, private string $userId) {}
-}</code></pre>
             <pre><code class="language-php">use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -336,31 +332,52 @@ class WebhookSender
             'resourceId' => $event->aggregateRootId(),
             'displayReference' => $event->displayReference(),
             'occurredAt' => $event->occurredAt()->getTimestamp(),
-
-            // use API platform's IriConverter to get the URL
-            'url' => $this->generateResourceUrl($event),
             'topic' => $event::eventType()->value,
+
+            // Hardcoded for simplicity.
+            // In practice, we use ApiPlatform\Metadata\IriConverterInterface to generate resource URLs,
+            // you can use a similar strategy.
+            'url' => "https://example.com/api/orders/{$event->aggregateRootId()}",
         ];
     }
 }</code></pre>
+            <pre><code class="language-php">interface WebhookSubscriptions
+{
+    /**
+     * @return iterable&lt;WebhookSubscription&gt;
+     */
+    public function findByTopic(DomainEventType $topic): iterable;
+}</code></pre>
+            <pre><code class="language-php">class WebhookSubscription
+{
+    public function __construct(
+        public string $url,
+        public string $secret,
+    ) {}
+}</code></pre>
             <p>
-                The <code>$webhookTopics</code> property (<code>webhook.topics</code> param) is populated by collecting all classes
-                with <code>#[TriggerWebhook]</code> attribute. It uses Symfony's resource tags under the hood. I'll hopefully
-                write another post about that.
+                The <code>Symfony\Component\Webhook\Subscriber</code> class is Symfony's representation of a webhook consumer. It holds the webhook URL and secret.
+                When Symfony's webhook transport sends the HTTP POST request, it automatically adds these headers:
             </p>
+            <ul>
+                <li><code>Webhook-Signature</code>: HMAC-SHA256 signature using the secret (format: <code>sha256=...</code>)</li>
+                <li><code>Webhook-Id</code>: The <code>RemoteEvent</code> id</li>
+                <li><code>Webhook-Event</code>: The <code>RemoteEvent</code> name</li>
+            </ul>
             <p>
-                The <code>Subscriber</code> class is Symfony's representation of a webhook consumer. It holds the webhook URL
-                and an optional secret for HMAC signature verification. Symfony's webhook transport uses this to send the HTTP
-                POST request and automatically generates the <code>Webhook-Signature</code> header using the secret.
+                To customize the signature algorithm or header names, decorate
+                <a href="https://github.com/symfony/symfony/blob/8d771b69c6c6264b2b85cf3c7e2e045d4959aa1b/src/Symfony/Component/Webhook/Server/HeaderSignatureConfigurator.php#L22"><code>webhook.signer</code></a> or
+                <a href="https://github.com/symfony/symfony/blob/8d771b69c6c6264b2b85cf3c7e2e045d4959aa1b/src/Symfony/Component/Webhook/Server/HeadersConfigurator.php#L20"><code>webhook.headers_configurator</code></a>.
             </p>
 
             <div class="tip">
-                <p><strong>TIP:</strong> Route <code>SendWebhookMessage</code> to an async transport in your Messenger configuration for automatic retries and better failure handling.</p>
+                <p><strong>TIP:</strong> Route <code>SendWebhookMessage</code> to an async transport for non-blocking delivery. Configure a retry strategy (delay + multiplier) to handle temporary failures. If event order is important, use a FIFO queue.</p>
             </div>
 
             <p>
                 If you're using API Platform, you can use it to document your webhooks in OpenAPI.
-                OpenAPI supports webhooks since version 3.1.0.
+                Unfortunately, it's not documented. So I am adding an example here using the dataless notification example from above,
+                to make it easier for others to find.
             </p>
             <pre><code class="language-php">use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
