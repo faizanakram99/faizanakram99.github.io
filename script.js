@@ -16,6 +16,7 @@ const setTheme = (theme) => {
     html.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     updateToggleIcon(theme);
+    updatePrismTheme(theme);
 };
 
 // Update toggle icon visibility
@@ -31,6 +32,27 @@ const updateToggleIcon = (theme) => {
     } else {
         sunIcon.style.display = 'none';
         moonIcon.style.display = 'block';
+    }
+};
+
+// Update Prism theme based on current theme
+const updatePrismTheme = (theme) => {
+    const lightTheme = document.getElementById('prism-light-theme');
+    const darkTheme = document.getElementById('prism-dark-theme');
+
+    if (!lightTheme || !darkTheme) return;
+
+    if (theme === 'dark') {
+        lightTheme.disabled = true;
+        darkTheme.disabled = false;
+    } else {
+        lightTheme.disabled = false;
+        darkTheme.disabled = true;
+    }
+
+    // Re-highlight code if Prism is available
+    if (typeof Prism !== 'undefined') {
+        setTimeout(() => Prism.highlightAll(), 10);
     }
 };
 
