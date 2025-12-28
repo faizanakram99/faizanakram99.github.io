@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Faizan Akram Dar">
-    <title>Send Webhooks with Symfony: Domain Events to Webhooks | Faizan Akram Dar</title>
-    <meta name="description" content="Translating domain events into HTTP webhooks using Symfony's webhook component. Real-world implementation from a production ERP system.">
+    <title>From Domain Events to Webhooks (using Symfony Webhook Component)</title>
+    <meta name="description" content="Translating domain events into HTTP webhooks using Symfony Webhook Component.">
     <meta name="keywords" content="symfony send webhooks, symfony webhook component, symfony remoteevent, symfony webhook transport, outgoing webhooks symfony">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Send Webhooks with Symfony: Domain Events to Webhooks">
-    <meta property="og:description" content="Translating domain events into HTTP webhooks using Symfony's webhook component from a production ERP system.">
+    <meta property="og:description" content="Translating domain events into HTTP webhooks using Symfony Webhook Component.">
     <meta property="og:type" content="article">
 
     <!-- Twitter -->
@@ -159,7 +159,13 @@
                 multiple external systems need to know about it.
             </p>
             <p>
-                We use domain events internally, and translate those into HTTP webhooks for external consumers using Symfony Webhook component. 
+                We use domain events internally, and translate those into HTTP webhooks for external consumers using Symfony Webhook Component.
+            </p>
+            <p>
+                The pattern itself is language/framework agnostic.
+                We use Symfony's webhook component for the HTTP delivery part because it handles signing,
+                retry logic, and async dispatch out of the box. But the domain events, repository pattern,
+                and webhook translation logic can work with any stack.
             </p>
             <p>
                 Here's how we do it (I've simplified it for this post).
