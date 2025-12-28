@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Notifying external systems about domain events via webhooks.">
     <meta name="author" content="Faizan Akram Dar">
-    <title>From Domain Events to Webhooks | Faizan Akram Dar</title>
+    <title>Send Webhooks with Symfony: Domain Events to Webhooks | Faizan Akram Dar</title>
+    <meta name="description" content="Translating domain events into HTTP webhooks using Symfony's webhook component. Real-world implementation from a production ERP system.">
+    <meta name="keywords" content="symfony send webhooks, symfony webhook component, symfony remoteevent, symfony webhook transport, outgoing webhooks symfony">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Send Webhooks with Symfony: Domain Events to Webhooks">
+    <meta property="og:description" content="Translating domain events into HTTP webhooks using Symfony's webhook component from a production ERP system.">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@faizanakram99">
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" id="prism-light-theme">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" id="prism-dark-theme" disabled>
@@ -149,7 +159,7 @@
                 multiple external systems need to know about it.
             </p>
             <p>
-                We use domain events internally, and translate those into HTTP webhooks for external consumers.
+                We use domain events internally, and translate those into HTTP webhooks for external consumers using Symfony Webhook component. 
             </p>
             <p>
                 Here's how we do it (I've simplified it for this post).
